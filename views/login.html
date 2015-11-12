@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title><%=title%></title>
+		<link rel="stylesheet" type="text/css" href="/libs/bootstrap-3.3.5/bootstrap.min.css"/>
+		<style type="text/css">
+		
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="col-sm-2"></div>
+			<div class="col-sm-8" style="margin-top:100px">
+				<div class="form-group">
+					<label>用户名:</label>
+					<input type="text" class="form-control" placeholder="用户名" id="username" />
+				</div>
+				<div class="form-group">
+					<label for="">密码:</label>
+					<input type="password" class="form-control" placeholder="密码" id="password" />
+				</div>
+				<div class="form-group">
+					<input type="button" class="form-control btn-block btn-info" value="登录" id="btn-login" />
+				</div>
+				<div class="form-group">
+					<input type="reset" class="form-control btn-block btn-danger" value="取消" />
+				</div>
+			</div>
+			<div class="col-sm-2"></div>
+		</div>
+		<script type="text/javascript" src="/js/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="/libs/layer/layer.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				$('#btn-login').click(function(){
+					var username = $('#username');
+					var password = $('#password');
+					if (!username.val()) {
+						layer.msg('请输入用户名', {shift: 6});
+						username.focus();
+						return false;
+					}
+					if (!password.val()) {
+						layer.msg('请输入密码', {shift: 6});
+						password.focus();
+						return false;
+					}
+					$.post("/login/check_login", {username:username.val(), password:password.val()}, function(re){
+						console.log(re)
+						return false;
+						if (re != 0) {
+							window.location.href = '/';
+							return false;
+						}
+						layer.msg('登录失败', {shift: 6});
+					}, 'text');
+				});
+			});
+		</script>
+	</body>
+</html>
