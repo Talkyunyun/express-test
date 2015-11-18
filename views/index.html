@@ -3,11 +3,307 @@
 	<head>
 		<meta charset="utf-8">
 		<title><%=title %></title>
+		<link rel="stylesheet" type="text/css" href="/libs/bootstrap-3.3.5/bootstrap.min.css"/>
+		<style type="text/css">
+			.radius_box{border-radius:5px;}
+			.margin_top{margin-top:15px;}
+		</style>
 	</head>
 	<body>
 		<div class="container-fluid">
 			<div class="col-sm-12">
-				首页
+				<h1 class="text-center"><%=title %></h1>
+				<div class="alert-danger panel-body radius_box">
+					<span class="abs">说明:</span>
+					<ol>
+						<li>该项目是基于express框架来构建</li>
+						<li>提供了WEB开发中常用功能的代码实例</li>
+						<li>运行该案例项目所需要的环境支持：
+							<ul>
+								<li>Mongodb数据的支持</li>
+								<li>Redis环境支持</li>
+								<li>Mysql数据库支持</li>
+								<li>注意：所需环境配置默认即可</li>
+							</ul>
+						</li>
+						<li>案例只是提供给学习Node人员来开发实际项目功能参考，具体结构部署规划可自行安排</li>
+						<li>如果在运行该项目过程中或者有什么疑问、见解可直接联系作者：
+							<ul>
+								<li>E-mail：<a href="mailto:talkyunyun@126.com">talkyunyun@126.com</a></li>
+								<li>Github：<a href="https://github.com/Talkyunyun">https://github.com/Talkyunyun</a></li>
+								<li>微博地址：<a href="http://weibo.com/234977271">http://weibo.com/234977271</a></li>
+							</ul>
+						</li>
+					</ol>
+				</div>
+				<div class="panel-info margin_top">
+					<h3>案例功能列表</h3>
+						
+					<!-- mongodb -->
+					<div class="col-sm-12">
+						<blockquote>
+							<h5>Mongodb操作：<a href="/mongo">运行案例</a></h5>
+							<footer>如何通过node连接Mongodb和操作以及注意事项</footer>
+						</blockquote>
+						<pre>
+var express = require('express');
+var mongodb = require('mongodb');
+var router  = express.Router();
+/**
+ *	@description: mongodb数据库连接配置
+ */
+var mongodbServer = new mongodb.Server('localhost', 27017, {auto_reconnect: true});
+var mongoObj = new mongodb.Db('alim', mongodbServer, {safe: true});
+router.get('/', function(req, res, next){
+	// 打开mongodb数据库
+	mongoObj.open(function(err, db){
+		if (!err) {
+			// 选择集合
+			db.createCollection('bb', {safe: true}, function(err, collection){
+				if (err) {
+					console.log(err);
+				} else {
+					// 新增数据
+	                var data = {uid:'2080', name:'Alim',number:1};
+	                collection.insert(data, {safe:true}, function(err, result){
+	                    console.log(result);
+	                });
+				}
+			});
+		} else {
+			console.log(err);
+		}
+	});
+	res.send('插入成功<a href='/mongo/find'>查看数据</a>');
+});
+// 查看数据
+router.get('/find', function(req, res, next){
+	
+	mongoObj.open(function(err, db){
+		if (!err) {
+			db.createCollection('bb', {safe: true}, function(err, collection){
+				collection.find().toArray(function(err, result){
+					console.log(result);
+				});
+			});
+		} else {
+			console.log(err);
+		}
+	});
+	res.send('成功');
+});
+module.exports = router;
+						</pre>
+					</div>
+					
+						
+					<!-- mysql -->
+					<div class="col-sm-12">
+						<blockquote>
+							<h5>Mysql操作：<a href="/mysql">运行案例</a></h5>
+							<footer>如何通过node连接Mysql和操作以及注意事项，<span class="text-danger">在运行该案例时请重新配置Mysql信息</span></footer>
+						</blockquote>
+						<pre>
+var express = require('express');
+var mysql   = require('mysql');
+var router  = express.Router();
+/**
+ *	@description: mysql数据库连接和全局配置
+ */
+var mysqlObj = mysql.createConnection({
+	host: '127.0.0.1',
+	user: 'root',
+	password: 'root',
+	database: 'beauty'
+});
+mysqlObj.connect();
+router.get('/', function(req, res, next){
+	// 从mysql中获取数据
+	mysqlObj.query("SELECT * FROM uc_user", function(err, rows, fields){
+		if (err) throw err; 
+		console.log(rows)
+	});
+	mysqlObj.end();// 关闭mysql连接
+	res.send('哈哈哈');
+});
+module.exports = router;
+						</pre>
+					</div>
+					
+						
+					<!-- redis -->
+					<div class="col-sm-12">
+						<blockquote>
+							<h5>Redis操作：<a href="/redis">运行案例</a></h5>
+							<footer>如何通过node连接Redis和操作以及注意事项</footer>
+						</blockquote>
+						<pre>
+var express = require('express');
+var redis 	= require('redis');
+var router  = express.Router();
+/**
+ *	@description: redis缓存连接和全局配置，使用请参考/routes/redis/redis.js文件
+ * 	连接redis数据库，createClient(port, host, options);
+ * 	如果redis在本机，端口也是默认，直接写createClient()即可
+ */
+var redisObj= redis.createClient(6379, '127.0.0.1', {});
+// redis操作测试
+router.get('/', function(req, res, next) {
+	// 设置redis数据
+	redisObj.set('test_redis', 'The is a redis value!');
+	
+	// 获取redis数据
+	redisObj.get('test_redis', function(err, rypaly){
+		res.send(rypaly.toString());
+	});
+});
+module.exports = router;
+						</pre>
+					</div>
+					
+						
+					<!-- session -->
+					<div class="col-sm-12">
+						<blockquote>
+							<h5>Session操作：<a href="/session/set">运行案例</a></h5>
+							<footer>操作session</footer>
+						</blockquote>
+						<pre>
+var express = require('express');
+var router  = express.Router();
+// 设置session值(node的session默认是保存在内存中的，请自行处理)
+router.get('/set', function(req, res, next){
+	
+	req.session.username = '我是杨云';
+	req.session.uid      = '2080';
+	res.send('设置session成功!<a href="/session/get">查看session值</a>');
+});
+// 获取session值
+router.get('/get', function(req, res, next){
+	
+	var username = req.session.username;
+	var uid = req.session.uid;
+	res.send('获取session成功!用户名：'+username+'<br>用户ID：'+uid+'<br><a href="/session/set">设置session值</a>');
+});
+module.exports = router;
+						</pre>
+					</div>
+					
+						
+					<!-- Cookie -->
+					<div class="col-sm-12">
+						<blockquote>
+							<h5>Cookie操作：<a href="/cookie/set">运行案例</a></h5>
+							<footer>操作Cookie</footer>
+						</blockquote>
+						<pre>
+var express = require('express');
+var router  = express.Router();
+// 设置cookie
+router.get('/set', function(req, res, next){
+	
+	res.cookie('name', 'Alim');
+	res.cookie('uid', '5210', {maxAge: 7200});
+	
+	res.send('设置成功!<a href="/cookie/get">查看cookie</a>');
+});
+
+// 获取cookie(特别说明获取cookie的时候是req对象，还有属性为cookies)
+router.get('/get', function(req, res, next){
+	
+	var name = req.cookies['name'];
+	var uid  = req.cookies['uid'];
+	res.send('获取cookie成功!<br>用户名：'+name+'<br>用户ID：'+uid+'<br><a href="/cookie/del">删除cookie</a>--<a href="/cookie/set">设置cookie</a>');
+});
+
+// 删除cookie
+router.get('/del', function(req, res, next){
+	
+	res.cookie('name', "Alim", {maxAge: 0});
+	res.cookie('uid', '545', {maxAge: 0});
+	res.send('删除成功！<a href="/cookie/get">查看cookie</a>');
+});
+
+module.exports = router;
+						</pre>
+					</div>
+					
+					<!-- md5 and sha1 -->
+					<div class="col-sm-12">
+						<blockquote>
+							<h5>Md5和sha1加密操作：<a href="/crypto/md5">运行案例</a></h5>
+							<footer>操作md5和sha1</footer>
+						</blockquote>
+						<pre>
+var express = require('express');
+var crypto  = require('crypto');
+var router  = express.Router();
+
+/**
+ *	@description: 全局注册md5和sha1加密对象，供全局使用，使用案例请参考/routes/crypto/crypto.js文件
+ */
+var md5 = crypto.createHash('md5');
+var sha1= crypto.createHash('sha1');
+
+
+// md5加密
+router.get('/md5', function(req, res, next){
+	md5.update('123456');// 需要md5加密的字符串
+	var str = md5.digest('hex');
+	res.send(str);// e10adc3949ba59abbe56e057f20f883e
+});
+
+// sh1加密
+router.get('/sha1', function(req, res, next){
+	sha1.update('123456');// 需要sha1加密的字符串
+	var str = sha1.digest('hex');
+	res.send(str);// 7c4a8d09ca3762af61e59520943dc26494f8941b
+});
+
+// 加密首页显示
+router.get('/', function(req, res, next){
+	res.send('加密首页');
+});
+
+module.exports = router;
+						</pre>
+					</div>
+					
+					<!-- file -->
+					<div class="col-sm-12">
+						<blockquote>
+							<h5>文件读写操作：<a href="/file">运行案例</a></h5>
+							<footer>操作文件的读和写</footer>
+						</blockquote>
+						<pre>
+var express = require('express');
+var fileObj = require('fs');// 文件IO操作模块
+var router  = express.Router();
+
+// 写文件
+router.get('/', function(req, res, next){
+
+	fileObj.writeFile('a.txt', '我讲要被写入到a.txt文件中,11111', function(err){
+		res.send('保存成功');
+	});
+});
+
+// 读文件
+router.get('/get', function(req, res, next){
+	fileObj.readFile('a.txt', 'utf8', function(err, data){
+		res.send(data);
+	});
+});
+
+module.exports = router;
+						</pre>
+					</div>
+				
+				</div>
+			</div>
+			<!-- footer box -->
+			<div class="footer">
+				<p class="text-center text-primary">该项目可以随便拿来使用和修改，如有什么不明白的地方请联系作者。</p>
 			</div>
 		</div>
 	</body>
