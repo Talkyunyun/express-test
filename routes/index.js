@@ -3,7 +3,7 @@ var router = express.Router();
 
 // 首页
 router.get('/', function(req, res, next) {
-  res.render('index', { title: '基于NodeJS的web项目功能演示' });
+  res.render('index', { title: '欢迎访问首页' });
 });
 
 module.exports = router;

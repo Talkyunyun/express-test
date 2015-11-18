@@ -44,7 +44,6 @@ var sessionPage= require('./routes/session/session');
 var cookiePage = require('./routes/cookie/cookie');
 var mongoPage  = require('./routes/mongodb/mongo');
 var filePage   = require('./routes/file/file');
-var requestPage= require('./routes/request/request');
 
 app.use('/', routes);
 app.use('/login', login);
@@ -55,7 +54,8 @@ app.use('/session', sessionPage);
 app.use('/cookie', cookiePage);
 app.use('/mongo', mongoPage);
 app.use('/file', filePage);
-app.use('/request', requestPage);
+
+
 
 /**
  *	@description: 404页面错误处理
